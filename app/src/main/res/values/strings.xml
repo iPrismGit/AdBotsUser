@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AdBotsUser</string>
+    <string name="home">Home</string>
+    <string name="analytics">Analytics</string>
 </resources>
