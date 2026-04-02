@@ -44,40 +44,57 @@ fun HomeScreen(navController: NavHostController) {
                 .background(DarkBlue)
                 .padding(12.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    GradientDivider()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GradientDivider()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GradientDivider()
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        GradientDivider()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GradientDivider()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GradientDivider()
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Image(
+                        painter = painterResource(R.drawable.add_bots_logo),
+                        contentDescription = "Location",
+                        modifier = Modifier.size(width = 120.dp, height = 60.dp),
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        GradientDivider()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GradientDivider()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        GradientDivider()
+                    }
                 }
-                Spacer(modifier = Modifier.width(4.dp))
-                Image(
-                    painter = painterResource(R.drawable.add_bots_logo),
-                    contentDescription = "Location",
-                    modifier = Modifier.size(width = 120.dp, height = 60.dp),
-                )
-
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    GradientDivider()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GradientDivider()
-                    Spacer(modifier = Modifier.height(8.dp))
-                    GradientDivider()
+                Column(modifier = Modifier.align(Alignment.CenterEnd).padding(top = 20.dp, end = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(R.drawable.logout_img),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text("Logout", color = White,
+                        fontFamily = MontserratFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,)
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
