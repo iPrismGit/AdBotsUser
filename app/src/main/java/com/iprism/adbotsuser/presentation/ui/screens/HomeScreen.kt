@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.R
 import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
+import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsuser.presentation.ui.theme.White
 
@@ -38,7 +40,8 @@ fun HomeScreen(navController: NavHostController) {
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.background(DarkBlue)
+            modifier = Modifier
+                .background(DarkBlue)
                 .padding(12.dp)
         ) {
             Row(
@@ -111,6 +114,16 @@ fun HomeScreen(navController: NavHostController) {
                         fontSize = 12.sp
                     )
                 }
+                Text(
+                    text = "Online",
+                    color = White,
+                    fontFamily = MontserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .background(color = Green, shape = RoundedCornerShape(4.dp))
+                        .padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 6.dp)
+                )
             }
         }
         GradientDivider()
