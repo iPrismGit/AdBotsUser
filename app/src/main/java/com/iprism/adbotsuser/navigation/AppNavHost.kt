@@ -14,6 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import com.iprism.adbotsuser.presentation.ui.components.BottomNavigationBar
 import com.iprism.adbotsuser.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsuser.presentation.ui.screens.SplashScreen
+import com.iprism.adbotsuser.presentation.ui.screens.AnalyticsScreen
+import com.iprism.adbotsuser.presentation.ui.screens.HomeScreen
 
 @Composable
 fun AppNavHost(
@@ -43,7 +45,13 @@ fun AppNavHost(
                 SplashScreen(navController)
             }
             composable(Screen.Login.route) {
-                LoginScreen({})
+                LoginScreen({ navController.navigate(Screen.Home.route)})
+            }
+            composable(Screen.Home.route) {
+                HomeScreen(navController)
+            }
+            composable(Screen.Analytics.route) {
+                AnalyticsScreen(navController)
             }
         }
     }
