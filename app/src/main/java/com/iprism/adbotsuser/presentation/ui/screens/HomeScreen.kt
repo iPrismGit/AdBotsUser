@@ -2,6 +2,7 @@ package com.iprism.adbotsuser.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,21 +11,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.R
+import com.iprism.adbotsuser.presentation.ui.components.LogoutDialog
+import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
 import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
@@ -32,6 +40,17 @@ import com.iprism.adbotsuser.presentation.ui.theme.White
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onDismiss = { showLogoutDialog = false },
+            onConfirm = {
+                showLogoutDialog = false
+                // Handle logout logic here
+            }
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +100,7 @@ fun HomeScreen(navController: NavHostController) {
                         GradientDivider()
                     }
                 }
-                Column(modifier = Modifier.align(Alignment.CenterEnd).padding(top = 20.dp, end = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.align(Alignment.CenterEnd).padding(top = 20.dp, end = 16.dp).clickable(onClick = {showLogoutDialog = true }), horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
                         painter = painterResource(R.drawable.logout_img),
                         contentDescription = "Logo",
