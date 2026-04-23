@@ -26,7 +26,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext private val conte
         val IS_LOGIN = booleanPreferencesKey("is_login")
     }
 
-    suspend fun saveUser(userId: String, userName: String, token: String) {
+    suspend fun     saveUser(userId: String, userName: String, token: String) {
         context.dataStore.edit { preferences ->
             preferences[USER_ID] = userId
             preferences[USER_NAME] = userName

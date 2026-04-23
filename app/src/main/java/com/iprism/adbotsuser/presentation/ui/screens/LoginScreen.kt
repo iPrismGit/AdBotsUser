@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.R
 import com.iprism.adbotsuser.data.models.login.LoginRequest
@@ -29,14 +31,17 @@ import com.iprism.adbotsuser.presentation.ui.theme.BorderGrey
 import com.iprism.adbotsuser.presentation.ui.theme.Grey555
 import com.iprism.adbotsuser.presentation.ui.theme.LightGrey
 import com.iprism.adbotsuser.presentation.viewmodels.LoginViewModel
+import com.iprism.adbotsuser.utils.UiState
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltViewModel()) {
 
     var userId by rememberSaveable { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    val state by viewModel.loginResponse.collectAsStateWithLifecycle()
+    val isLoading = state is UiState.Loading
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -148,21 +153,29 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
                     onClick = {
-                        val req = LoginRequest(userId, password)
+                        val req = LoginRequest(userId, password, "12345")
                         viewModel.login(req)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .imePadding(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                    enabled = !isLoading
                 ) {
-                    Text(
-                        text = "Continue",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White,
-                        modifier = Modifier.padding(8.dp),
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Continue",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(8.dp),
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }

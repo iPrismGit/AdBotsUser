@@ -7,6 +7,9 @@ data class LoginRequest(
 	@field:SerializedName("user_name")
 	val userName: String,
 
+	@field:SerializedName("password")
+	val password: String,
+
 	@field:SerializedName("token")
-	val token: String
+	val token: String,
 )

@@ -42,10 +42,30 @@ fun AppNavHost(
             modifier = Modifier.padding(bottom = if (showBottomBar) innerPadding.calculateBottomPadding() else 0.dp)
         ) {
             composable(Screen.Splash.route) {
-                SplashScreen(navController)
+                SplashScreen(
+                    {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    },
+                    {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Splash.route) {
+                                inclusive = true
+                            }
+                        }
+                    })
             }
             composable(Screen.Login.route) {
-                LoginScreen({ navController.navigate(Screen.Home.route)})
+                LoginScreen({
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                })
             }
             composable(Screen.Home.route) {
                 HomeScreen(navController)
