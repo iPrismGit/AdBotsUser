@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlin.toString
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val repository: AuthRepository, private val dataStoreManager: DataStoreManager) : ViewModel() {
+class LoginViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
 
     private val _loginResponse = MutableStateFlow<UiState<LoginApiResponse>>(UiState.Idle)
     val loginResponse: StateFlow<UiState<LoginApiResponse>> = _loginResponse
@@ -45,14 +45,7 @@ class LoginViewModel @Inject constructor(private val repository: AuthRepository,
                 Log.d("requestLoading", request.toString())
                 val response = repository.login(request)
                 if (response.status) {
-                    val user = response.response.userDetails
                     Log.d("requestLoading", response.response.userDetails.toString())
-                    dataStoreManager.saveUser(
-                        userId = user.id,
-                        userName = user.name,
-                        token = user.token
-                    )
-                    dataStoreManager.loginUser()
                     _loginResponse.value = UiState.Success(response)
                     _event.emit(LoginEvent.NavigateToHome)
                 } else {
