@@ -1,12 +1,12 @@
 package com.iprism.adbotsuser.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,24 +14,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.R
+import com.iprism.adbotsuser.data.models.login.LoginRequest
 import com.iprism.adbotsuser.presentation.ui.components.CustomTextField
 import com.iprism.adbotsuser.presentation.ui.theme.BorderGrey
 import com.iprism.adbotsuser.presentation.ui.theme.Grey555
 import com.iprism.adbotsuser.presentation.ui.theme.LightGrey
+import com.iprism.adbotsuser.presentation.viewmodels.LoginViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(onContinueClick: () -> Unit) {
+fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltViewModel()) {
 
     var userId by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest { event ->
+            when (event) {
+                is LoginViewModel.LoginEvent.NavigateToHome -> {
+                    onNavigateToHome()
+                }
+
+                is LoginViewModel.LoginEvent.Error -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -88,7 +108,13 @@ fun LoginScreen(onContinueClick: () -> Unit) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    placeholder = { Text("Enter Password", style = MaterialTheme.typography.bodySmall, color = Grey555) },
+                    placeholder = {
+                        Text(
+                            "Enter Password",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Grey555
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -121,9 +147,13 @@ fun LoginScreen(onContinueClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
-                    onClick = { onContinueClick() },
+                    onClick = {
+                        val req = LoginRequest(userId, password)
+                        viewModel.login(req)
+                    },
                     modifier = Modifier
-                        .fillMaxWidth().imePadding(),
+                        .fillMaxWidth()
+                        .imePadding(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
                 ) {
