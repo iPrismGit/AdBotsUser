@@ -1,8 +1,11 @@
 package com.iprism.adbotsuser.data.repositories
 
 import android.util.Log
+import com.iprism.adbotsuser.data.models.User
 import com.iprism.adbotsuser.data.models.login.LoginApiResponse
 import com.iprism.adbotsuser.data.models.login.LoginRequest
+import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsApiResponse
+import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
 import com.iprism.adbotsuser.data.remote.HealthDrinksService
@@ -14,8 +17,14 @@ import kotlin.toString
 class PromotionsRepository @Inject constructor(
     private val apiService: HealthDrinksService, private val dataStoreManager: DataStoreManager
 ) {
+
+    private suspend fun getUser(): User {
+        return dataStoreManager.userDetails.first()
+    }
+
+
     suspend fun fetchPromotions(page: Int): PromotionsApiResponse {
-        val user = dataStoreManager.userDetails.first()
+        val user = getUser()
         val request = PromotionsRequest(
             userId = user.userId?.toInt() ?: 0,
             authToken = user.token ?: "",
@@ -23,5 +32,16 @@ class PromotionsRepository @Inject constructor(
         )
         Log.d("requestLoading", request.toString())
         return apiService.fetchPromotions(request)
+    }
+
+    suspend fun fetchPromotionDetails(promotionId: Int): PromotionDetailsApiResponse {
+        val user = getUser()
+        val request = PromotionDetailsRequest(
+            userId = user.userId?.toInt() ?: 0,
+            authToken = user.token ?: "",
+            promotionId = promotionId
+        )
+        Log.d("requestLoading", request.toString())
+        return apiService.fetchPromotionDetails(request)
     }
 }

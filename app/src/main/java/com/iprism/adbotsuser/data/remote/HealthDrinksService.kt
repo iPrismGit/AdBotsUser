@@ -2,6 +2,8 @@ package com.iprism.adbotsuser.data.remote
 
 import com.iprism.adbotsuser.data.models.login.LoginApiResponse
 import com.iprism.adbotsuser.data.models.login.LoginRequest
+import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsApiResponse
+import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
 import com.iprism.adbotsuser.utils.Constants
@@ -15,4 +17,7 @@ interface HealthDrinksService {
 
     @POST(Constants.PROMOTIONS_ENDPOINT)
     suspend fun fetchPromotions(@Body req : PromotionsRequest) : PromotionsApiResponse
+
+    @POST(Constants.PROMOTION_DETAILS_ENDPOINT)
+    suspend fun fetchPromotionDetails(@Body req : PromotionDetailsRequest) : PromotionDetailsApiResponse
 }

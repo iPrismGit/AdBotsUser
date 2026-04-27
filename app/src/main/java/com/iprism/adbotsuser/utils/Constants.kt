@@ -6,4 +6,5 @@ object Constants {
     const val IMAGES_URL = "https://uzzto.com/adbots/"
     const val LOGIN_ENDPOINT = "user_login"
     const val PROMOTIONS_ENDPOINT = "user_promotions"
+    const val PROMOTION_DETAILS_ENDPOINT = "user_promotion_view"
 }
