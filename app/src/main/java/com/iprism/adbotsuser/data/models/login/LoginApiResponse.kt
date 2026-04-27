@@ -49,6 +49,9 @@ data class UserDetails(
 	@field:SerializedName("token")
 	val token: String,
 
+	@field:SerializedName("auth_token")
+	val authToken: String,
+
 	@field:SerializedName("status")
 	val status: String
 )
