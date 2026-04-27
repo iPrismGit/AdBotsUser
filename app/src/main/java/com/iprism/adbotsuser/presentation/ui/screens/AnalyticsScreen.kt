@@ -60,7 +60,7 @@ fun AnalyticsScreen(navController: NavHostController) {
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(8) {
-                    PromotionCardInAnalytics({ navController.navigate("promotion_details") })
+                    //PromotionCardInAnalytics({ navController.navigate("promotion_details") })
                 }
             }
         }

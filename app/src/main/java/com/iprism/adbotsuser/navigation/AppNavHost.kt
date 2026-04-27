@@ -68,7 +68,7 @@ fun AppNavHost(
                 })
             }
             composable(Screen.Home.route) {
-                HomeScreen(navController)
+                HomeScreen()
             }
             composable(Screen.Analytics.route) {
                 AnalyticsScreen(navController)

@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -20,27 +21,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.R
+import com.iprism.adbotsuser.data.models.promotions.PromotionsItem
+import com.iprism.adbotsuser.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsuser.presentation.ui.components.LogoutDialog
 import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
 import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
 import com.iprism.adbotsuser.presentation.ui.theme.White
+import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
+import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val promotions by viewModel.promotions.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
 
     if (showLogoutDialog) {
         LogoutDialog(
@@ -175,20 +181,47 @@ fun HomeScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(8) {
-                    PromotionCardInAnalytics({ navController.navigate("promotion_details") })
+                itemsIndexed(promotions) { index, item ->
+                    if (index >= promotions.size - 1) {
+                        viewModel.fetchPromotions()
+                    }
+                    PromotionCardInAnalytics(item, {})
+                }
+                if (isPaginationLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+    if (uiState is UiState.Loading && promotions.isEmpty()) {
+        LoadingScreen()
+    }
+
+    if (uiState is UiState.Error && promotions.isEmpty()) {
+        Text(
+            text = (uiState as UiState.Error).message,
+            color = BLACK
+        )
+    }
 }
 
 @Composable
-fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
+fun PromotionCardInAnalytics(promotionsItem: PromotionsItem, onAnalyticsClick: () -> Unit) {
     val cardGradient = Brush.horizontalGradient(
         colors = listOf(Color(0xFF015DC5), Color(0xFF559CEE))
     )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -198,7 +231,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
     ) {
         Column {
             Text(
-                text = "iPrism Add",
+                text = promotionsItem.name,
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
@@ -208,7 +241,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Start Date : 21-03-2026",
+                text = "Start Date : ${promotionsItem.startDate}",
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
@@ -218,7 +251,7 @@ fun PromotionCardInAnalytics(onAnalyticsClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "End Date : 21-04-2026",
+                text = "End Date : ${promotionsItem.endDate}",
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
@@ -261,16 +294,5 @@ fun GradientDivider() {
                     )
                 )
             )
-    )
-}
-
-@Preview
-@Composable
-fun AnalyticsScreenPreview() {
-    AnalyticsScreen(
-        navController = NavHostController(
-            LocalContext
-                .current
-        )
     )
 }
