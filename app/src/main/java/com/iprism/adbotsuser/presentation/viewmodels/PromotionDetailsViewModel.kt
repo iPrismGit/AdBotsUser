@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsApiResponse
 import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsRequest
+import com.iprism.adbotsuser.data.models.report.ReportApiResponse
 import com.iprism.adbotsuser.data.repositories.PromotionsRepository
 import com.iprism.adbotsuser.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,9 @@ class PromotionDetailsViewModel @Inject constructor(
 
     private val _response = MutableStateFlow<UiState<PromotionDetailsApiResponse>>(UiState.Idle)
     val response: StateFlow<UiState<PromotionDetailsApiResponse>> = _response
+
+    private val _reportResponse = MutableStateFlow<UiState<ReportApiResponse>>(UiState.Idle)
+    val reportResponse: StateFlow<UiState<ReportApiResponse>> = _reportResponse
 
     init {
         savedStateHandle.get<String>("id")?.let { id ->
@@ -49,6 +53,23 @@ class PromotionDetailsViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("PromotionDetailsVM", "Error", e)
                 _response.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            }
+        }
+    }
+
+    fun userReport(promotionId: String) {
+        viewModelScope.launch {
+            _reportResponse.value = UiState.Loading
+            try {
+                val response = repository.userReport(promotionId)
+                if (response.status) {
+                    _reportResponse.value = UiState.Success(response)
+                } else {
+                    _reportResponse.value = UiState.Error(response.message)
+                }
+            } catch (e: Exception) {
+                Log.e("PromotionDetailsVM", "ReportError", e)
+                _reportResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.iprism.adbotsuser.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,11 +8,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,9 +37,17 @@ fun PromotionDetailsScreen(
     onBack: () -> Unit,
     viewModel: PromotionDetailsViewModel = hiltViewModel()
 ) {
-    val redColor = Color(0xFFEF4444)
-    val dividerColor = Color(0xFFEEEEEE)
     val state by viewModel.response.collectAsStateWithLifecycle()
+    val reportState by viewModel.reportResponse.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(reportState) {
+        if (reportState is UiState.Success) {
+            Toast.makeText(context, (reportState as UiState.Success).data.message, Toast.LENGTH_SHORT).show()
+        } else if (reportState is UiState.Error) {
+            Toast.makeText(context, (reportState as UiState.Error).message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -132,20 +143,28 @@ fun PromotionDetailsScreen(
                 }
 
                 OutlinedButton(
-                    onClick = { /* Extend plan logic */ },
+                    onClick = { viewModel.userReport(details.id) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
+                    enabled = reportState !is UiState.Loading,
                     shape = RoundedCornerShape(12.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, Red),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Red)
                 ) {
-                    Text(
-                        text = "Report",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Red,
-                        modifier = Modifier.padding(8.dp)
-                    )
+                    if (reportState is UiState.Loading) {
+                        CircularProgressIndicator(
+                            color = Red,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Report",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Red,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
             }
 

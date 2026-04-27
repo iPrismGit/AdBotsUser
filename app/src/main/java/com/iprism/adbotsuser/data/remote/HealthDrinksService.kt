@@ -4,6 +4,8 @@ import com.iprism.adbotsuser.data.models.login.LoginApiResponse
 import com.iprism.adbotsuser.data.models.login.LoginRequest
 import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsApiResponse
 import com.iprism.adbotsuser.data.models.promotiondetails.PromotionDetailsRequest
+import com.iprism.adbotsuser.data.models.report.ReportApiResponse
+import com.iprism.adbotsuser.data.models.report.ReportRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
 import com.iprism.adbotsuser.utils.Constants
@@ -20,4 +22,7 @@ interface HealthDrinksService {
 
     @POST(Constants.PROMOTION_DETAILS_ENDPOINT)
     suspend fun fetchPromotionDetails(@Body req : PromotionDetailsRequest) : PromotionDetailsApiResponse
+
+    @POST(Constants.USER_REPORT_ENDPOINT)
+    suspend fun userReport(@Body req : ReportRequest) : ReportApiResponse
 }
