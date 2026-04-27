@@ -22,14 +22,16 @@ import com.iprism.adbotsuser.R
 import com.iprism.adbotsuser.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.BLACK1
+import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
+import com.iprism.adbotsuser.presentation.ui.theme.Red
 import com.iprism.adbotsuser.presentation.ui.theme.White
 import com.iprism.adbotsuser.presentation.viewmodels.PromotionDetailsViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
 fun PromotionDetailsScreen(
-    onBack : () -> Unit,
+    onBack: () -> Unit,
     viewModel: PromotionDetailsViewModel = hiltViewModel()
 ) {
     val redColor = Color(0xFFEF4444)
@@ -81,10 +83,31 @@ fun PromotionDetailsScreen(
                         )
                     }
 
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(shape = RoundedCornerShape(12.dp), color = Green),
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "₹${details.earnedAmount}",
+                            fontSize = 30.sp,
+                            color = White,
+                            fontFamily = MontserratFamily,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Earned Amount",
+                            fontSize = 20.sp,
+                            color = White,
+                            fontFamily = MontserratFamily,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Promotion Analytics",
+                        text = "Video Analytics",
                         fontSize = 16.sp,
                         color = BLACK1,
                         style = MaterialTheme.typography.bodySmall
@@ -106,18 +129,19 @@ fun PromotionDetailsScreen(
                     HorizontalDivider(thickness = 1.dp, color = dividerColor)
                 }
 
-                Button(
+                OutlinedButton(
                     onClick = { /* Extend plan logic */ },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = redColor)
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Red),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Red)
                 ) {
                     Text(
-                        text = "Extend Plan",
+                        text = "Report",
                         style = MaterialTheme.typography.labelMedium,
-                        color = White,
+                        color = Red,
                         modifier = Modifier.padding(8.dp)
                     )
                 }
