@@ -41,7 +41,7 @@ import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel = hiltViewModel()) {
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
@@ -185,7 +185,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     if (index >= promotions.size - 1) {
                         viewModel.fetchPromotions()
                     }
-                    PromotionCardInAnalytics(item, {})
+                    PromotionCardInAnalytics(item, {onNavPromotionDetails(item.id)})
                 }
                 if (isPaginationLoading) {
                     item {

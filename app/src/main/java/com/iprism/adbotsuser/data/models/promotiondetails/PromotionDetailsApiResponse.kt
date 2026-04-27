@@ -53,5 +53,8 @@ data class Response(
 	val startDate: String,
 
 	@field:SerializedName("total_days")
-	val totalDays: String
+	val totalDays: String,
+
+	@field:SerializedName("no_of_screens")
+	val noOfScreens: String
 )

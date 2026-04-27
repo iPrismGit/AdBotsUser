@@ -8,7 +8,7 @@ data class PromotionDetailsRequest(
 	val userId: Int,
 
 	@field:SerializedName("promotion_id")
-	val promotionId: Int,
+	val promotionId: String,
 
 	@field:SerializedName("auth_token")
 	val authToken: String

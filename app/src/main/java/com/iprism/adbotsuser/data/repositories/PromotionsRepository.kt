@@ -18,7 +18,7 @@ class PromotionsRepository @Inject constructor(
     private val apiService: HealthDrinksService, private val dataStoreManager: DataStoreManager
 ) {
 
-    private suspend fun getUser(): User {
+    suspend fun getUser(): User {
         return dataStoreManager.userDetails.first()
     }
 
@@ -34,7 +34,7 @@ class PromotionsRepository @Inject constructor(
         return apiService.fetchPromotions(request)
     }
 
-    suspend fun fetchPromotionDetails(promotionId: Int): PromotionDetailsApiResponse {
+    suspend fun fetchPromotionDetails(promotionId: String): PromotionDetailsApiResponse {
         val user = getUser()
         val request = PromotionDetailsRequest(
             userId = user.userId?.toInt() ?: 0,

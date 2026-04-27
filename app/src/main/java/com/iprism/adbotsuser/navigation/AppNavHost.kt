@@ -16,6 +16,7 @@ import com.iprism.adbotsuser.presentation.ui.screens.LoginScreen
 import com.iprism.adbotsuser.presentation.ui.screens.SplashScreen
 import com.iprism.adbotsuser.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsuser.presentation.ui.screens.HomeScreen
+import com.iprism.adbotsuser.presentation.ui.screens.PromotionDetailsScreen
 
 @Composable
 fun AppNavHost(
@@ -68,10 +69,13 @@ fun AppNavHost(
                 })
             }
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen({id -> navController.navigate(Screen.PromotionDetails.createRoute(id))})
             }
             composable(Screen.Analytics.route) {
                 AnalyticsScreen(navController)
+            }
+            composable(Screen.PromotionDetails.route) {
+                PromotionDetailsScreen({ navController.popBackStack() })
             }
         }
     }
