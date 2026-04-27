@@ -83,11 +83,14 @@ fun PromotionDetailsScreen(
                         )
                     }
 
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(shape = RoundedCornerShape(12.dp), color = Green),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp, horizontal = 12.dp)
+                            .background(shape = RoundedCornerShape(12.dp), color = Green)
+                            .padding(vertical = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             text = "₹${details.earnedAmount}",
                             fontSize = 30.sp,
@@ -95,6 +98,7 @@ fun PromotionDetailsScreen(
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Earned Amount",
                             fontSize = 20.sp,
@@ -103,8 +107,6 @@ fun PromotionDetailsScreen(
                             fontWeight = FontWeight.Normal
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
                         text = "Video Analytics",
@@ -117,16 +119,16 @@ fun PromotionDetailsScreen(
 
                     // Data Rows
                     AnalyticsRow(label = "Total Days", value = "${details.totalDays} days")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
 
                     AnalyticsRow(label = "Price Per Minute", value = "₹${details.pricePerMinute}")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
 
                     AnalyticsRow(label = "Play Time", value = "${details.playTime} Minutes")
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
 
                     AnalyticsRow(label = "Screens", value = details.noOfScreens)
-                    HorizontalDivider(thickness = 1.dp, color = dividerColor)
+                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
                 }
 
                 OutlinedButton(
