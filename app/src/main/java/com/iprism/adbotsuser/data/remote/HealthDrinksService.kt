@@ -2,6 +2,8 @@ package com.iprism.adbotsuser.data.remote
 
 import com.iprism.adbotsuser.data.models.login.LoginApiResponse
 import com.iprism.adbotsuser.data.models.login.LoginRequest
+import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
+import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
 import com.iprism.adbotsuser.utils.Constants
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -10,4 +12,7 @@ interface HealthDrinksService {
 
     @POST(Constants.LOGIN_ENDPOINT)
     suspend fun login(@Body req : LoginRequest) : LoginApiResponse
+
+    @POST(Constants.PROMOTIONS_ENDPOINT)
+    suspend fun fetchPromotions(@Body req : PromotionsRequest) : PromotionsApiResponse
 }
