@@ -9,4 +9,5 @@ object Constants {
     const val PROMOTION_DETAILS_ENDPOINT = "user_promotion_view"
     const val USER_REPORT_ENDPOINT = "user_report_request"
     const val REDEEM_HISTORY_ENDPOINT = "user_redeem_history"
+    const val USER_DETAILS_ENDPOINT = "user_details"
 }

@@ -10,6 +10,8 @@ import com.iprism.adbotsuser.data.models.report.ReportApiResponse
 import com.iprism.adbotsuser.data.models.report.ReportRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
+import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
+import com.iprism.adbotsuser.data.models.userdetails.UserDetailsRequest
 import com.iprism.adbotsuser.data.remote.HealthDrinksService
 import com.iprism.adbotsuser.utils.DataStoreManager
 import kotlinx.coroutines.flow.first
@@ -56,5 +58,15 @@ class PromotionsRepository @Inject constructor(
         )
         Log.d("requestLoading", request.toString())
         return apiService.userReport(request)
+    }
+
+    suspend fun fetchUserDetails(): UserDetailsApiResponse {
+        val user = getUser()
+        val request = UserDetailsRequest(
+            userId = user.userId?.toInt() ?: 0,
+            authToken = user.token ?: ""
+        )
+        Log.d("requestLoading", request.toString())
+        return apiService.fetchUserDetails(request)
     }
 }

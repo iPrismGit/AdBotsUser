@@ -8,6 +8,8 @@ import com.iprism.adbotsuser.data.models.report.ReportApiResponse
 import com.iprism.adbotsuser.data.models.report.ReportRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
+import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
+import com.iprism.adbotsuser.data.models.userdetails.UserDetailsRequest
 import com.iprism.adbotsuser.data.models.wallethistory.RedeemHistoryApiResponse
 import com.iprism.adbotsuser.data.models.wallethistory.RedeemHistoryRequest
 import com.iprism.adbotsuser.utils.Constants
@@ -30,4 +32,7 @@ interface HealthDrinksService {
 
     @POST(Constants.REDEEM_HISTORY_ENDPOINT)
     suspend fun fetchRedeemHistory(@Body request : RedeemHistoryRequest) : RedeemHistoryApiResponse
+
+    @POST(Constants.USER_DETAILS_ENDPOINT)
+    suspend fun fetchUserDetails(@Body request : UserDetailsRequest) : UserDetailsApiResponse
 }
