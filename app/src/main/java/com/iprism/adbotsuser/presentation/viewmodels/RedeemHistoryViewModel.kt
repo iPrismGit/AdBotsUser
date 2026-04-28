@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WalletHistoryViewModel @Inject constructor(
+class RedeemHistoryViewModel @Inject constructor(
     private val repository: RedeemRepository,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {

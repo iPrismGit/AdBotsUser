@@ -23,13 +23,13 @@ import com.iprism.adbotsuser.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.LightGrey2
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
-import com.iprism.adbotsuser.presentation.viewmodels.WalletHistoryViewModel
+import com.iprism.adbotsuser.presentation.viewmodels.RedeemHistoryViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun WalletHistoryScreen(
+fun RedeemHistoryScreen(
     navController: NavHostController,
-    viewModel: WalletHistoryViewModel = hiltViewModel()
+    viewModel: RedeemHistoryViewModel = hiltViewModel()
 ) {
     val historyItems by viewModel.historyItems.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -18,7 +18,7 @@ import com.iprism.adbotsuser.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsuser.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsuser.presentation.ui.screens.PromotionDetailsScreen
 import com.iprism.adbotsuser.presentation.ui.screens.ReportSuccessScreen
-import com.iprism.adbotsuser.presentation.ui.screens.WalletHistoryScreen
+import com.iprism.adbotsuser.presentation.ui.screens.RedeemHistoryScreen
 
 @Composable
 fun AppNavHost(
@@ -87,7 +87,7 @@ fun AppNavHost(
                 ReportSuccessScreen(onBack = {navController.popBackStack()}, message)
             }
             composable(Screen.WalletHistory.route) {
-                WalletHistoryScreen(navController)
+                RedeemHistoryScreen(navController)
             }
         }
     }
