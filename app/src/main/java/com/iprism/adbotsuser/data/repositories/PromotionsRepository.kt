@@ -69,4 +69,8 @@ class PromotionsRepository @Inject constructor(
         Log.d("requestLoading", request.toString())
         return apiService.fetchUserDetails(request)
     }
+
+    suspend fun logout() {
+        dataStoreManager.clearData()
+    }
 }

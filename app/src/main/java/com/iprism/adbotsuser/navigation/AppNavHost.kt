@@ -71,7 +71,14 @@ fun AppNavHost(
                 })
             }
             composable(Screen.Home.route) {
-                HomeScreen({id -> navController.navigate(Screen.PromotionDetails.createRoute(id))})
+                HomeScreen(
+                    onLogout = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    onNavPromotionDetails = { id -> navController.navigate(Screen.PromotionDetails.createRoute(id)) }
+                )
             }
             composable(Screen.Analytics.route) {
                 AnalyticsScreen({navController.navigate(Screen.WalletHistory.route)}, {id -> navController.navigate(Screen.PromotionDetails.createRoute(id))})

@@ -93,4 +93,11 @@ class HomeViewModel @Inject constructor(private val repository: PromotionsReposi
             }
         }
     }
+
+    fun logout(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            repository.logout()
+            onComplete()
+        }
+    }
 }
