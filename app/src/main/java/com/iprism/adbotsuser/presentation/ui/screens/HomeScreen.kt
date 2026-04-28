@@ -36,6 +36,7 @@ import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
 import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
+import com.iprism.adbotsuser.presentation.ui.theme.Red
 import com.iprism.adbotsuser.presentation.ui.theme.White
 import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
@@ -47,6 +48,7 @@ fun HomeScreen(onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
+    val userDetailsState by viewModel.userDetails.collectAsStateWithLifecycle()
 
     if (showLogoutDialog) {
         LogoutDialog(
@@ -136,34 +138,36 @@ fun HomeScreen(onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Hyderabad",
+                            text = if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.location else "",
                             color = White,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        Icon(
+                        /*Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = null,
                             tint = Color.White
-                        )
+                        )*/
                     }
-                    Text(
+                    /*Text(
                         text = "Road No 4, Banjara Hills...",
                         color = White,
                         fontFamily = MontserratFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp
-                    )
+                    )*/
                 }
+                val statusText = if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.status else "Offline"
+                val isOnline = statusText.lowercase() == "online"
                 Text(
-                    text = "Online",
+                    text = statusText.replaceFirstChar { it.uppercase() },
                     color = White,
                     fontFamily = MontserratFamily,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
-                        .background(color = Green, shape = RoundedCornerShape(4.dp))
+                        .background(color = if (isOnline) Green else Red, shape = RoundedCornerShape(4.dp))
                         .padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 6.dp)
                 )
             }
