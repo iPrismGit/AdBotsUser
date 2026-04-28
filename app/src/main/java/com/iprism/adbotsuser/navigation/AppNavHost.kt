@@ -17,6 +17,7 @@ import com.iprism.adbotsuser.presentation.ui.screens.SplashScreen
 import com.iprism.adbotsuser.presentation.ui.screens.AnalyticsScreen
 import com.iprism.adbotsuser.presentation.ui.screens.HomeScreen
 import com.iprism.adbotsuser.presentation.ui.screens.PromotionDetailsScreen
+import com.iprism.adbotsuser.presentation.ui.screens.ReportSuccessScreen
 
 @Composable
 fun AppNavHost(
@@ -75,7 +76,14 @@ fun AppNavHost(
                 AnalyticsScreen(navController)
             }
             composable(Screen.PromotionDetails.route) {
-                PromotionDetailsScreen({ navController.popBackStack() })
+                PromotionDetailsScreen(
+                    onBack = { navController.popBackStack() },
+                    onReportSuccess = { message -> navController.navigate(Screen.ReportSuccess.createRoute(message)) }
+                )
+            }
+            composable(Screen.ReportSuccess.route) { navBackStackEntry ->
+                val message = navBackStackEntry.arguments?.getString("message") ?: ""
+                ReportSuccessScreen(onBack = {navController.popBackStack()}, message)
             }
         }
     }

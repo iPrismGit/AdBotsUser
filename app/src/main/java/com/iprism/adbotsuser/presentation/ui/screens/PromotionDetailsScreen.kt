@@ -7,9 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +33,7 @@ import com.iprism.adbotsuser.utils.UiState
 @Composable
 fun PromotionDetailsScreen(
     onBack: () -> Unit,
+    onReportSuccess: (String) -> Unit,
     viewModel: PromotionDetailsViewModel = hiltViewModel()
 ) {
     val state by viewModel.response.collectAsStateWithLifecycle()
@@ -43,8 +42,9 @@ fun PromotionDetailsScreen(
 
     LaunchedEffect(reportState) {
         if (reportState is UiState.Success) {
-            Toast.makeText(context, (reportState as UiState.Success).data.message, Toast.LENGTH_SHORT).show()
+            onReportSuccess("Report Sent Successfully")
         } else if (reportState is UiState.Error) {
+            onReportSuccess("Report Sent Successfully")
             Toast.makeText(context, (reportState as UiState.Error).message, Toast.LENGTH_SHORT).show()
         }
     }
