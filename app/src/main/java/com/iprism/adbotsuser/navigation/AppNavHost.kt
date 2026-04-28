@@ -74,7 +74,7 @@ fun AppNavHost(
                 HomeScreen({id -> navController.navigate(Screen.PromotionDetails.createRoute(id))})
             }
             composable(Screen.Analytics.route) {
-                AnalyticsScreen({navController.navigate(Screen.WalletHistory.route)})
+                AnalyticsScreen({navController.navigate(Screen.WalletHistory.route)}, {id -> navController.navigate(Screen.PromotionDetails.createRoute(id))})
             }
             composable(Screen.PromotionDetails.route) {
                 PromotionDetailsScreen(
