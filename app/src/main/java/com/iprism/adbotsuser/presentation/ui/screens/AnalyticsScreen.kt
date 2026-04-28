@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,10 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import com.iprism.adbotsuser.presentation.ui.theme.MontserratFamily
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iprism.adbotsuser.R
+import com.iprism.adbotsuser.data.models.userdetails.Response
 import com.iprism.adbotsuser.presentation.ui.components.LoadingScreen
 import com.iprism.adbotsuser.presentation.ui.theme.BLACK
 import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
@@ -38,6 +42,8 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
+    val userDetailsState by viewModel.userDetails.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +74,10 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
             }
         }
         Column {
-            TotalEarningsSection()
+            val data = (userDetailsState as? UiState.Success)?.data?.response
+            data?.let {
+                TotalEarningsSection(it)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -81,11 +90,21 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(horizontal = 12.dp)) {
+            val listState = rememberLazyListState()
+
+            LazyColumn(state = listState, verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(horizontal = 12.dp)) {
                 itemsIndexed(promotions) { index, item ->
-                    if (index >= promotions.size - 1) {
-                        viewModel.fetchPromotions()
+                    LaunchedEffect(listState) {
+                        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                            .collect { lastVisibleIndex ->
+                                if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
+                                    viewModel.fetchPromotions()
+                                }
+                            }
                     }
+                    /*if (index >= promotions.size - 1) {
+                        viewModel.fetchPromotions()
+                    }*/
                     PromotionCardInAnalytics(item, {onNavPromotionDetails(item.id)})
                 }
                 if (isPaginationLoading) {
@@ -119,7 +138,7 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
 }
 
 @Composable
-fun TotalEarningsSection() {
+fun TotalEarningsSection(userDetails : Response) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,7 +166,7 @@ fun TotalEarningsSection() {
 
             Column {
                 Text(
-                    text = "₹800",
+                    text = "₹${userDetails.earnedMoney}",
                     color = Green,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -161,7 +180,7 @@ fun TotalEarningsSection() {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Min withdraw Amount ₹1000 *",
+                    text = "Min withdraw Amount ₹1000",
                     color = Red,
                     fontSize = 14.sp,
                     fontFamily = MontserratFamily

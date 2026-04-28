@@ -3,6 +3,7 @@ package com.iprism.adbotsuser.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsuser.data.models.promotions.PromotionsItem
+import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
 import com.iprism.adbotsuser.data.repositories.PromotionsRepository
 import com.iprism.adbotsuser.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,9 @@ class HomeViewModel @Inject constructor(private val repository: PromotionsReposi
     private val _promotions = MutableStateFlow<List<PromotionsItem>>(emptyList())
     val promotions: StateFlow<List<PromotionsItem>> = _promotions
 
+    private val _userDetails = MutableStateFlow<UiState<UserDetailsApiResponse>>(UiState.Idle)
+    val userDetails: StateFlow<UiState<UserDetailsApiResponse>> = _userDetails
+
     private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val uiState: StateFlow<UiState<Unit>> = _uiState
 
@@ -29,6 +33,7 @@ class HomeViewModel @Inject constructor(private val repository: PromotionsReposi
     private var isFetching = false
 
     init {
+        fetchUserDetails()
         fetchPromotions()
     }
 
@@ -69,6 +74,22 @@ class HomeViewModel @Inject constructor(private val repository: PromotionsReposi
             } finally {
                 isFetching = false
                 _isPaginationLoading.value = false
+            }
+        }
+    }
+
+    fun fetchUserDetails() {
+        viewModelScope.launch {
+            _userDetails.value = UiState.Loading
+            try {
+                val response = repository.fetchUserDetails()
+                if (response.status) {
+                    _userDetails.value = UiState.Success(response)
+                } else {
+                    _userDetails.value = UiState.Error(response.message)
+                }
+            } catch (e: Exception) {
+                _userDetails.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
