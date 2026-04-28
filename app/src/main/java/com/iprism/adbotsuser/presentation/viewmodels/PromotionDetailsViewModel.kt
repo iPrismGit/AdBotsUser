@@ -10,8 +10,12 @@ import com.iprism.adbotsuser.data.models.report.ReportApiResponse
 import com.iprism.adbotsuser.data.repositories.PromotionsRepository
 import com.iprism.adbotsuser.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,10 +26,18 @@ class PromotionDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _response = MutableStateFlow<UiState<PromotionDetailsApiResponse>>(UiState.Idle)
-    val response: StateFlow<UiState<PromotionDetailsApiResponse>> = _response
+    val response: StateFlow<UiState<PromotionDetailsApiResponse>> = _response.asStateFlow()
 
     private val _reportResponse = MutableStateFlow<UiState<ReportApiResponse>>(UiState.Idle)
-    val reportResponse: StateFlow<UiState<ReportApiResponse>> = _reportResponse
+    val reportResponse: StateFlow<UiState<ReportApiResponse>> = _reportResponse.asStateFlow()
+
+    private val _reportEvent = MutableSharedFlow<ReportEvent>()
+    val reportEvent: SharedFlow<ReportEvent> = _reportEvent.asSharedFlow()
+
+    sealed class ReportEvent {
+        data class Success(val message: String) : ReportEvent()
+        data class Error(val message: String) : ReportEvent()
+    }
 
     init {
         savedStateHandle.get<String>("id")?.let { id ->
@@ -64,12 +76,18 @@ class PromotionDetailsViewModel @Inject constructor(
                 val response = repository.userReport(promotionId)
                 if (response.status) {
                     _reportResponse.value = UiState.Success(response)
+                    _reportEvent.emit(ReportEvent.Success(response.message))
                 } else {
                     _reportResponse.value = UiState.Error(response.message)
+                    _reportEvent.emit(ReportEvent.Error(response.message))
                 }
             } catch (e: Exception) {
                 Log.e("PromotionDetailsVM", "ReportError", e)
-                _reportResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                val errorMsg = e.localizedMessage ?: "Unknown error"
+                _reportResponse.value = UiState.Error(errorMsg)
+                _reportEvent.emit(ReportEvent.Error(errorMsg))
+            } finally {
+                _reportResponse.value = UiState.Idle
             }
         }
     }

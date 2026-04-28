@@ -29,6 +29,7 @@ import com.iprism.adbotsuser.presentation.ui.theme.Red
 import com.iprism.adbotsuser.presentation.ui.theme.White
 import com.iprism.adbotsuser.presentation.viewmodels.PromotionDetailsViewModel
 import com.iprism.adbotsuser.utils.UiState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PromotionDetailsScreen(
@@ -40,12 +41,16 @@ fun PromotionDetailsScreen(
     val reportState by viewModel.reportResponse.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(reportState) {
-        if (reportState is UiState.Success) {
-            onReportSuccess("Report Sent Successfully")
-        } else if (reportState is UiState.Error) {
-            onReportSuccess("Report Sent Successfully")
-            Toast.makeText(context, (reportState as UiState.Error).message, Toast.LENGTH_SHORT).show()
+    LaunchedEffect(Unit) {
+        viewModel.reportEvent.collectLatest { event ->
+            when (event) {
+                is PromotionDetailsViewModel.ReportEvent.Success -> {
+                    onReportSuccess(event.message)
+                }
+                is PromotionDetailsViewModel.ReportEvent.Error -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -155,7 +160,8 @@ fun PromotionDetailsScreen(
                     if (reportState is UiState.Loading) {
                         CircularProgressIndicator(
                             color = Red,
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(20.dp)
                         )
                     } else {
                         Text(
