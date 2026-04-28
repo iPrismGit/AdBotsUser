@@ -11,4 +11,5 @@ sealed class Screen(val route: String) {
     object ReportSuccess : Screen("report_success/{message}") {
         fun createRoute(message : String) = "report_success/$message"
     }
+    object WalletHistory : Screen("wallet_history")
 }

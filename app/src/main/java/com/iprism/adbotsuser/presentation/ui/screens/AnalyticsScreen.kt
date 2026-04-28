@@ -19,7 +19,7 @@ import com.iprism.adbotsuser.presentation.ui.theme.DarkBlue
 import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
 
 @Composable
-fun AnalyticsScreen(navController: NavHostController) {
+fun AnalyticsScreen(onNavWalletHistory:() -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,7 +40,7 @@ fun AnalyticsScreen(navController: NavHostController) {
                 color = Color.White
             )
 
-            IconButton(onClick = { }) {
+            IconButton(onClick = { onNavWalletHistory() }) {
                 Icon(
                     painter = painterResource(R.drawable.history_img),
                     contentDescription = "Back",
