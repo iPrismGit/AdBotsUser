@@ -33,11 +33,12 @@ import com.iprism.adbotsuser.presentation.ui.theme.DarkRed
 import com.iprism.adbotsuser.presentation.ui.theme.Green
 import com.iprism.adbotsuser.presentation.ui.theme.Red
 import com.iprism.adbotsuser.presentation.ui.theme.Red1
+import com.iprism.adbotsuser.presentation.viewmodels.AnalyticsViewModel
 import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel = hiltViewModel()) {
+fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(String) -> Unit, viewModel: AnalyticsViewModel) {
 
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -205,10 +206,4 @@ fun TotalEarningsSection(userDetails : Response) {
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun AnalyticsScreenPreview() {
-    AnalyticsScreen({}, {})
 }

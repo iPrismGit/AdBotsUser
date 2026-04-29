@@ -42,7 +42,7 @@ import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, viewModel: HomeViewModel) {
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
