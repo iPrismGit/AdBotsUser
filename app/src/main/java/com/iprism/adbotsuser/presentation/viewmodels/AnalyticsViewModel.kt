@@ -3,12 +3,17 @@ package com.iprism.adbotsuser.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.iprism.adbotsuser.data.models.promotions.PromotionsItem
+import com.iprism.adbotsuser.data.models.redeemrequest.RedeemRequestApiResponse
 import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
 import com.iprism.adbotsuser.data.repositories.PromotionsRepository
 import com.iprism.adbotsuser.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +29,17 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
 
     private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val uiState: StateFlow<UiState<Unit>> = _uiState
+
+    private val _redeemState = MutableStateFlow<UiState<RedeemRequestApiResponse>>(UiState.Idle)
+    val redeemState: StateFlow<UiState<RedeemRequestApiResponse>> = _redeemState.asStateFlow()
+
+    private val _redeemEvent = MutableSharedFlow<RedeemEvent>()
+    val redeemEvent: SharedFlow<RedeemEvent> = _redeemEvent.asSharedFlow()
+
+    sealed class RedeemEvent {
+        data class Success(val message: String) : RedeemEvent()
+        data class Error(val message: String) : RedeemEvent()
+    }
 
     private val _isPaginationLoading = MutableStateFlow(false)
     val isPaginationLoading: StateFlow<Boolean> = _isPaginationLoading
@@ -98,6 +114,26 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
         viewModelScope.launch {
             repository.logout()
             onComplete()
+        }
+    }
+
+    fun redeemRequest(amount: String) {
+        viewModelScope.launch {
+            _redeemState.value = UiState.Loading
+            try {
+                val response = repository.redeemRequest(amount)
+                if (response.status) {
+                    _redeemState.value = UiState.Success(response)
+                    _redeemEvent.emit(RedeemEvent.Success(response.message))
+                } else {
+                    _redeemState.value = UiState.Error(response.message)
+                    _redeemEvent.emit(RedeemEvent.Error(response.message))
+                }
+            } catch (e: Exception) {
+                val errorMsg = e.localizedMessage ?: "Unknown error"
+                _redeemState.value = UiState.Error(errorMsg)
+                _redeemEvent.emit(RedeemEvent.Error(errorMsg))
+            }
         }
     }
 }

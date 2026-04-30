@@ -12,6 +12,8 @@ import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
 import com.iprism.adbotsuser.data.models.userdetails.UserDetailsRequest
 import com.iprism.adbotsuser.data.models.wallethistory.RedeemHistoryApiResponse
 import com.iprism.adbotsuser.data.models.wallethistory.RedeemHistoryRequest
+import com.iprism.adbotsuser.data.models.redeemrequest.RedeemRequest
+import com.iprism.adbotsuser.data.models.redeemrequest.RedeemRequestApiResponse
 import com.iprism.adbotsuser.utils.Constants
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -35,4 +37,7 @@ interface HealthDrinksService {
 
     @POST(Constants.USER_DETAILS_ENDPOINT)
     suspend fun fetchUserDetails(@Body request : UserDetailsRequest) : UserDetailsApiResponse
+
+    @POST(Constants.REDEEM_REQUEST_ENDPOINT)
+    suspend fun redeemRequest(@Body request : RedeemRequest) : RedeemRequestApiResponse
 }

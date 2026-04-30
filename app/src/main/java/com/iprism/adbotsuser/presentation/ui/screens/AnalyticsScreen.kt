@@ -1,5 +1,6 @@
 package com.iprism.adbotsuser.presentation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,12 +40,32 @@ import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
 
 @Composable
-fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(String) -> Unit, viewModel: AnalyticsViewModel) {
+fun AnalyticsScreen(
+    onNavWalletHistory: () -> Unit,
+    onNavPromotionDetails: (String) -> Unit,
+    onNavRedeemSuccess: (String) -> Unit,
+    viewModel: AnalyticsViewModel
+) {
 
     val promotions by viewModel.promotions.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
     val userDetailsState by viewModel.userDetails.collectAsStateWithLifecycle()
+    val redeemState by viewModel.redeemState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.redeemEvent.collect { event ->
+            when (event) {
+                is AnalyticsViewModel.RedeemEvent.Success -> {
+                    onNavRedeemSuccess("Redeem Request Sent")
+                }
+                is AnalyticsViewModel.RedeemEvent.Error -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -77,7 +99,11 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
         Column {
             val data = (userDetailsState as? UiState.Success)?.data?.response
             data?.let {
-                TotalEarningsSection(it)
+                TotalEarningsSection(
+                    userDetails = it,
+                    redeemState = redeemState,
+                    onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -139,7 +165,11 @@ fun AnalyticsScreen(onNavWalletHistory:() -> Unit, onNavPromotionDetails :(Strin
 }
 
 @Composable
-fun TotalEarningsSection(userDetails : Response) {
+fun TotalEarningsSection(
+    userDetails: Response,
+    redeemState: UiState<*>,
+    onRedeemClick: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -192,18 +222,26 @@ fun TotalEarningsSection(userDetails : Response) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = { /* Handle Redeem */ },
+            onClick = { onRedeemClick(userDetails.earnedMoney) },
             modifier = Modifier
                 .fillMaxWidth(),
+            enabled = redeemState !is UiState.Loading,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
         ) {
-            Text(
-                text = "Redeem now",
-                color = Color.White,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(8.dp)
-            )
+            if (redeemState is UiState.Loading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = "Redeem now",
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
     }
 }

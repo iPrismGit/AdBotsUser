@@ -10,6 +10,8 @@ import com.iprism.adbotsuser.data.models.report.ReportApiResponse
 import com.iprism.adbotsuser.data.models.report.ReportRequest
 import com.iprism.adbotsuser.data.models.promotions.PromotionsApiResponse
 import com.iprism.adbotsuser.data.models.promotions.PromotionsRequest
+import com.iprism.adbotsuser.data.models.redeemrequest.RedeemRequest
+import com.iprism.adbotsuser.data.models.redeemrequest.RedeemRequestApiResponse
 import com.iprism.adbotsuser.data.models.userdetails.UserDetailsApiResponse
 import com.iprism.adbotsuser.data.models.userdetails.UserDetailsRequest
 import com.iprism.adbotsuser.data.remote.HealthDrinksService
@@ -68,6 +70,17 @@ class PromotionsRepository @Inject constructor(
         )
         Log.d("requestLoading", request.toString())
         return apiService.fetchUserDetails(request)
+    }
+
+    suspend fun redeemRequest(amount: String): RedeemRequestApiResponse {
+        val user = getUser()
+        val request = RedeemRequest(
+            userId = user.userId?.toInt() ?: 0,
+            authToken = user.token ?: "",
+            amount = amount
+        )
+        Log.d("requestLoading", request.toString())
+        return apiService.redeemRequest(request)
     }
 
     suspend fun logout() {

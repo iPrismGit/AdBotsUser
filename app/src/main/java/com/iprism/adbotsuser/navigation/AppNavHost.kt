@@ -112,6 +112,9 @@ fun AppNavHost(
                         },
                         onNavPromotionDetails = { id ->
                             navController.navigate(Screen.PromotionDetails.createRoute(id))
+                        },
+                        onNavRedeemSuccess = { message ->
+                            navController.navigate(Screen.ReportSuccess.createRoute(message))
                         }
                     )
                 }
