@@ -22,10 +22,10 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
     ViewModel() {
 
     private val _promotions = MutableStateFlow<List<PromotionsItem>>(emptyList())
-    val promotions: StateFlow<List<PromotionsItem>> = _promotions
+    val promotions = _promotions.asStateFlow()
 
     private val _userDetails = MutableStateFlow<UiState<UserDetailsApiResponse>>(UiState.Idle)
-    val userDetails: StateFlow<UiState<UserDetailsApiResponse>> = _userDetails
+    val userDetails = _userDetails.asStateFlow()
 
     private val _uiState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val uiState: StateFlow<UiState<Unit>> = _uiState
