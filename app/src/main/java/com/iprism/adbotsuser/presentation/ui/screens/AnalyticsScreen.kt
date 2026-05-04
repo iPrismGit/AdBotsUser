@@ -211,7 +211,7 @@ fun TotalEarningsSection(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Min withdraw Amount ₹1000",
+                    text = "Min withdraw Amount ₹1000 *",
                     color = Red,
                     fontSize = 14.sp,
                     fontFamily = MontserratFamily
