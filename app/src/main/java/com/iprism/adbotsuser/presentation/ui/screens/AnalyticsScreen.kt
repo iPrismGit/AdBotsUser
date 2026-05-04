@@ -9,8 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +39,7 @@ import com.iprism.adbotsuser.presentation.viewmodels.AnalyticsViewModel
 import com.iprism.adbotsuser.presentation.viewmodels.HomeViewModel
 import com.iprism.adbotsuser.utils.UiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalyticsScreen(
     onNavWalletHistory: () -> Unit,
@@ -52,6 +53,7 @@ fun AnalyticsScreen(
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
     val userDetailsState by viewModel.userDetails.collectAsStateWithLifecycle()
     val redeemState by viewModel.redeemState.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -67,85 +69,95 @@ fun AnalyticsScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .statusBarsPadding()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh() },
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(DarkBlue)
-                .padding(vertical = 8.dp, horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .background(Color.White)
+                .statusBarsPadding()
         ) {
-            Text(
-                text = "Analytics",
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.White
-            )
-
-            IconButton(onClick = { onNavWalletHistory() }) {
-                Icon(
-                    painter = painterResource(R.drawable.history_img),
-                    contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(DarkBlue)
+                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Analytics",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White
                 )
+
+                IconButton(onClick = { onNavWalletHistory() }) {
+                    Icon(
+                        painter = painterResource(R.drawable.history_img),
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
-        }
-        Column {
-            val data = (userDetailsState as? UiState.Success)?.data?.response
-            data?.let {
-                TotalEarningsSection(
-                    userDetails = it,
-                    redeemState = redeemState,
-                    onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
+            Column(modifier = Modifier.weight(1f)) {
+                val data = (userDetailsState as? UiState.Success)?.data?.response
+                data?.let {
+                    TotalEarningsSection(
+                        userDetails = it,
+                        redeemState = redeemState,
+                        onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Promotions",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = DarkRed,
+                    modifier = Modifier.padding(horizontal = 12.dp)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Promotions",
-                style = MaterialTheme.typography.headlineSmall,
-                color = DarkRed,
-                modifier = Modifier.padding(horizontal = 12.dp)
-            )
+                val listState = rememberLazyListState()
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            val listState = rememberLazyListState()
-
-            LazyColumn(state = listState, verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(horizontal = 12.dp)) {
-                itemsIndexed(promotions) { index, item ->
-                    LaunchedEffect(listState) {
-                        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                            .collect { lastVisibleIndex ->
-                                if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
-                                    viewModel.fetchPromotions()
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp).fillMaxSize()
+                ) {
+                    itemsIndexed(promotions) { index, item ->
+                        LaunchedEffect(listState) {
+                            snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                                .collect { lastVisibleIndex ->
+                                    if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
+                                        viewModel.fetchPromotions()
+                                    }
                                 }
-                            }
-                    }
-                    /*if (index >= promotions.size - 1) {
+                        }
+                        /*if (index >= promotions.size - 1) {
                         viewModel.fetchPromotions()
                     }*/
-                    PromotionCardInAnalytics(item, {onNavPromotionDetails(item.id)})
-                }
-                if (isPaginationLoading) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
-                            )
+                        PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
+                    }
+                    if (isPaginationLoading) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            }
                         }
                     }
                 }

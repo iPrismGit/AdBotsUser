@@ -44,6 +44,9 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
     private val _isPaginationLoading = MutableStateFlow(false)
     val isPaginationLoading: StateFlow<Boolean> = _isPaginationLoading
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var currentPage = 1
     private var isLastPage = false
     private var isFetching = false
@@ -56,57 +59,71 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
     fun fetchPromotions() {
         if (isFetching || isLastPage) return
         viewModelScope.launch {
-            isFetching = true
-            if (currentPage == 1) {
-                _uiState.value = UiState.Loading
-            } else {
-                _isPaginationLoading.value = true
-            }
-            try {
-                val response = repository.fetchPromotions(currentPage)
-                if (response.status) {
-                    val newItems = response.response.promotions
-                    if (newItems.isNotEmpty()) {
-                        _promotions.value += newItems
-                        val totalPages = response.response.pagination.totalPages.size
-                        if (currentPage >= totalPages) {
-                            isLastPage = true
-                        } else {
-                            currentPage++
-                        }
-                    } else {
-                        isLastPage = true
-                    }
-                    _uiState.value = UiState.Success(Unit)
-                } else {
+            performFetchPromotions()
+        }
+    }
+
+    private suspend fun performFetchPromotions() {
+        isFetching = true
+        if (currentPage == 1) {
+            _uiState.value = UiState.Loading
+        } else {
+            _isPaginationLoading.value = true
+        }
+        try {
+            val response = repository.fetchPromotions(currentPage)
+            if (response.status) {
+                val newItems = response.response.promotions
+                if (newItems.isNotEmpty()) {
                     if (currentPage == 1) {
-                        _uiState.value = UiState.Error(response.message)
+                        _promotions.value = newItems
+                    } else {
+                        _promotions.value += newItems
                     }
+                    val totalPages = response.response.pagination.totalPages.size
+                    if (currentPage >= totalPages) {
+                        isLastPage = true
+                    } else {
+                        currentPage++
+                    }
+                } else {
+                    isLastPage = true
                 }
-            } catch (e: Exception) {
+                _uiState.value = UiState.Success(Unit)
+            } else {
                 if (currentPage == 1) {
-                    _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                    _uiState.value = UiState.Error(response.message)
                 }
-            } finally {
-                isFetching = false
-                _isPaginationLoading.value = false
             }
+        } catch (e: Exception) {
+            if (currentPage == 1) {
+                _uiState.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            }
+        } finally {
+            isFetching = false
+            _isPaginationLoading.value = false
         }
     }
 
     fun fetchUserDetails() {
         viewModelScope.launch {
+            performFetchUserDetails()
+        }
+    }
+
+    private suspend fun performFetchUserDetails() {
+        if (userDetails.value !is UiState.Success) {
             _userDetails.value = UiState.Loading
-            try {
-                val response = repository.fetchUserDetails()
-                if (response.status) {
-                    _userDetails.value = UiState.Success(response)
-                } else {
-                    _userDetails.value = UiState.Error(response.message)
-                }
-            } catch (e: Exception) {
-                _userDetails.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+        }
+        try {
+            val response = repository.fetchUserDetails()
+            if (response.status) {
+                _userDetails.value = UiState.Success(response)
+            } else {
+                _userDetails.value = UiState.Error(response.message)
             }
+        } catch (e: Exception) {
+            _userDetails.value = UiState.Error(e.localizedMessage ?: "Unknown error")
         }
     }
 
@@ -134,6 +151,22 @@ class AnalyticsViewModel @Inject constructor(private val repository: PromotionsR
                 _redeemState.value = UiState.Error(errorMsg)
                 _redeemEvent.emit(RedeemEvent.Error(errorMsg))
             }
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            currentPage = 1
+            isLastPage = false
+
+            // Launch both concurrently and wait for them
+            val job1 = launch { performFetchUserDetails() }
+            val job2 = launch { performFetchPromotions() }
+
+            job1.join()
+            job2.join()
+            _isRefreshing.value = false
         }
     }
 }
