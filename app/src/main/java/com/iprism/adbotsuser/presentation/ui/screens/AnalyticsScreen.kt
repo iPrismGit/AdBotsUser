@@ -236,9 +236,13 @@ fun TotalEarningsSection(
             onClick = { onRedeemClick(userDetails.earnedMoney) },
             modifier = Modifier
                 .fillMaxWidth(),
-            enabled = redeemState !is UiState.Loading,
+            enabled = redeemState !is UiState.Loading && (userDetails.earnedMoney.toDoubleOrNull()
+                ?: 0.0) >= 1000.0,
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = DarkBlue,
+                disabledContainerColor = Color.Gray
+            )
         ) {
             if (redeemState is UiState.Loading) {
                 CircularProgressIndicator(
