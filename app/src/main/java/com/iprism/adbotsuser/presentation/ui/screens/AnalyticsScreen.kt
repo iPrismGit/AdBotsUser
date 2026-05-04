@@ -241,7 +241,7 @@ fun TotalEarningsSection(
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = DarkBlue,
-                disabledContainerColor = Color.Gray
+                disabledContainerColor = Color.LightGray
             )
         ) {
             if (redeemState is UiState.Loading) {
