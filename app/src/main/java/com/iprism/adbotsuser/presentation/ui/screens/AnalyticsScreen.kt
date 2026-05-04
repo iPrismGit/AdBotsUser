@@ -1,5 +1,6 @@
 package com.iprism.adbotsuser.presentation.ui.screens
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
@@ -80,7 +81,7 @@ fun AnalyticsScreen(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .statusBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -168,7 +169,7 @@ fun AnalyticsScreen(
     if (uiState is UiState.Error && promotions.isEmpty()) {
         Text(
             text = (uiState as UiState.Error).message,
-            color = BLACK
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -179,10 +180,11 @@ fun TotalEarningsSection(
     redeemState: UiState<*>,
     onRedeemClick: (String) -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF1F5F9))
+            .background(if (isDark) Color(0xFF2C2C2C) else Color(0xFFF1F5F9))
             .padding(12.dp)
     ) {
         Text(

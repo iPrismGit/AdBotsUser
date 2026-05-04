@@ -31,7 +31,7 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -44,7 +44,7 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                     text = "Are you sure you want\nLogout?",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -59,10 +59,10 @@ fun LogoutDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
                             .weight(1f)
                             .height(48.dp),
                         shape = RoundedCornerShape(24.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.Black),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
                     ) {
-                        Text(text = "Yes", color = BLACK, fontSize = 16.sp, fontFamily = MontserratFamily
+                        Text(text = "Yes", color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontFamily = MontserratFamily
                             , fontWeight = FontWeight.Normal)
                     }
 

@@ -68,7 +68,7 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .statusBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -186,7 +186,7 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
                     text = "Promotions",
                     style = MaterialTheme.typography.headlineSmall,
                     color = DarkRed,
-                    modifier = Modifier.padding(horizontal = 12.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp).background(MaterialTheme.colorScheme.background)
                 )
             }
 
@@ -223,7 +223,7 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
     if (uiState is UiState.Error && promotions.isEmpty()) {
         Text(
             text = (uiState as UiState.Error).message,
-            color = BLACK
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

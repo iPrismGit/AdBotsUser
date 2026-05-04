@@ -57,7 +57,7 @@ fun PromotionDetailsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 12.dp)
             .statusBarsPadding()
     ) {
@@ -68,7 +68,7 @@ fun PromotionDetailsScreen(
             Icon(
                 painter = painterResource(R.drawable.back_img),
                 contentDescription = "Back",
-                tint = BLACK,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(28.dp),
             )
         }
@@ -88,12 +88,12 @@ fun PromotionDetailsScreen(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = MontserratFamily,
-                            color = Black
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Text(
                             text = " (${details.bussinessName})",
                             fontSize = 20.sp,
-                            color = Black,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Normal
                         )
@@ -127,7 +127,7 @@ fun PromotionDetailsScreen(
                     Text(
                         text = "Video Analytics",
                         fontSize = 16.sp,
-                        color = BLACK1,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodySmall
                     )
 
@@ -135,16 +135,16 @@ fun PromotionDetailsScreen(
 
                     // Data Rows
                     AnalyticsRow(label = "Total Days", value = "${details.totalDays} days")
-                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Price Per Minute", value = "₹${details.pricePerMinute}")
-                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Play Time", value = "${details.playTime} Minutes")
-                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Screens", value = details.noOfScreens)
-                    HorizontalDivider(thickness = 1.dp, color = BLACK1)
+                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
                 }
 
                 OutlinedButton(
@@ -203,14 +203,14 @@ fun AnalyticsRow(label: String, value: String) {
             fontSize = 13.sp,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = value,
             fontSize = 13.sp,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

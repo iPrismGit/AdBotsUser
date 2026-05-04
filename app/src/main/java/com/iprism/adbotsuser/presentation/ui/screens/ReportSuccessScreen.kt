@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +31,7 @@ fun ReportSuccessScreen(onBack: () -> Unit, message : String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -41,7 +42,7 @@ fun ReportSuccessScreen(onBack: () -> Unit, message : String) {
             fontSize = 18.sp,
             fontFamily = MontserratFamily,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

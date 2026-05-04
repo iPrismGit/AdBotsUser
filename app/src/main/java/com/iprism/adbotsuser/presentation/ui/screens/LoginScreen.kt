@@ -1,6 +1,7 @@
 package com.iprism.adbotsuser.presentation.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -61,7 +62,7 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -80,8 +81,12 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .border(1.dp, BorderGrey, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-            color = Color.White,
+                .border(
+                    1.dp,
+                    if (isSystemInDarkTheme()) Color.DarkGray else BorderGrey,
+                    RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                ),
+            color = MaterialTheme.colorScheme.surface,
             tonalElevation = 2.dp
         ) {
             Column(
@@ -91,7 +96,7 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
             ) {
                 Text(
                     text = "User Id",
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium
                 )
 
@@ -106,7 +111,7 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Password",
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -125,7 +130,9 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = LightGrey
+                        unfocusedBorderColor = LightGrey,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     visualTransformation = if (isPasswordVisible)
                         VisualTransformation.None
@@ -147,7 +154,7 @@ fun LoginScreen(onNavigateToHome: () -> Unit, viewModel: LoginViewModel = hiltVi
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "By clicking, I accept the terms of service and privacy policy",
-                    color = Color.DarkGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(modifier = Modifier.height(32.dp))

@@ -25,7 +25,7 @@ fun TitleText(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = BLACK
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -42,7 +42,7 @@ fun RequiredTitleText(text: String) {
             }
         },
         style = MaterialTheme.typography.bodySmall,
-        color = BLACK
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -65,7 +65,9 @@ fun CustomTextField(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = LightGrey
+            unfocusedBorderColor = LightGrey,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
     )
 }

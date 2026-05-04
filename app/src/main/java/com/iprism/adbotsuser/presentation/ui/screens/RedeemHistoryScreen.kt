@@ -35,11 +35,10 @@ fun RedeemHistoryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isPaginationLoading by viewModel.isPaginationLoading.collectAsStateWithLifecycle()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
                 .statusBarsPadding()
         ) {
             IconButton(
@@ -49,7 +48,7 @@ fun RedeemHistoryScreen(
                 Icon(
                     painter = painterResource(R.drawable.back_img),
                     contentDescription = "Back",
-                    tint = BLACK,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -57,7 +56,7 @@ fun RedeemHistoryScreen(
             Text(
                 text = "Redeem History",
                 style = MaterialTheme.typography.headlineSmall,
-                color = BLACK,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(all = 12.dp)
             )
 
@@ -97,7 +96,7 @@ fun RedeemHistoryScreen(
             Text(
                 text = (uiState as UiState.Error).message,
                 modifier = Modifier.align(Alignment.Center),
-                color = BLACK
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -123,7 +122,7 @@ fun TransactionItem(transaction: HistoryItem) {
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
                 fontFamily = MontserratFamily,
-                color = BLACK
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "$amountPrefix${transaction.amount}",

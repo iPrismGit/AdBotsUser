@@ -23,7 +23,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp
     ) {
 
@@ -54,7 +54,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Icon(
                         painter = painterResource(id = icon),
                         contentDescription = label,
-                        tint = if (isSelected) DarkBlue else LightGrey1,
+                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(24.dp)
                     )
                 },
@@ -63,7 +63,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Text(
                         text = label,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (isSelected) DarkBlue else LightGrey1
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
 
