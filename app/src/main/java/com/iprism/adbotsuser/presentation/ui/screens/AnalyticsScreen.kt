@@ -74,36 +74,43 @@ fun AnalyticsScreen(
         onRefresh = { viewModel.refresh() },
         modifier = Modifier.fillMaxSize()
     ) {
-        Column(
+        val listState = rememberLazyListState()
+
+        LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(DarkBlue)
-                    .padding(vertical = 8.dp, horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Analytics",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White
-                )
-
-                IconButton(onClick = { onNavWalletHistory() }) {
-                    Icon(
-                        painter = painterResource(R.drawable.history_img),
-                        contentDescription = "Back",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(DarkBlue)
+                        .padding(vertical = 8.dp, horizontal = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Analytics",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.White
                     )
+
+                    IconButton(onClick = { onNavWalletHistory() }) {
+                        Icon(
+                            painter = painterResource(R.drawable.history_img),
+                            contentDescription = "Back",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
-            Column(modifier = Modifier.weight(1f)) {
+
+            item {
                 val data = (userDetailsState as? UiState.Success)?.data?.response
                 data?.let {
                     TotalEarningsSection(
@@ -112,53 +119,43 @@ fun AnalyticsScreen(
                         onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
+            item {
                 Text(
                     text = "Promotions",
                     style = MaterialTheme.typography.headlineSmall,
                     color = DarkRed,
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                val listState = rememberLazyListState()
-
-                LazyColumn(
-                    state = listState,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.padding(horizontal = 12.dp).fillMaxSize()
-                ) {
-                    itemsIndexed(promotions) { index, item ->
-                        LaunchedEffect(listState) {
-                            snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                                .collect { lastVisibleIndex ->
-                                    if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
-                                        viewModel.fetchPromotions()
-                                    }
-                                }
-                        }
-                        /*if (index >= promotions.size - 1) {
-                        viewModel.fetchPromotions()
-                    }*/
-                        PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
-                    }
-                    if (isPaginationLoading) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    strokeWidth = 2.dp
-                                )
+            itemsIndexed(promotions) { index, item ->
+                LaunchedEffect(listState) {
+                    snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                        .collect { lastVisibleIndex ->
+                            if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
+                                viewModel.fetchPromotions()
                             }
                         }
+                }
+                Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+                    PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
+                }
+            }
+
+            if (isPaginationLoading) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
                     }
                 }
             }
