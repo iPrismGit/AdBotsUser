@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -57,120 +58,127 @@ fun AnalyticsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        viewModel.redeemEvent.collect { event ->
-            when (event) {
-                is AnalyticsViewModel.RedeemEvent.Success -> {
-                    onNavRedeemSuccess("Redeem Request Sent")
-                }
-                is AnalyticsViewModel.RedeemEvent.Error -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LaunchedEffect(Unit) {
+            viewModel.redeemEvent.collect { event ->
+                when (event) {
+                    is AnalyticsViewModel.RedeemEvent.Success -> {
+                        onNavRedeemSuccess("Redeem Request Sent")
+                    }
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val listState = rememberLazyListState()
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .statusBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(DarkBlue)
-                        .padding(vertical = 8.dp, horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Analytics",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White
-                    )
-
-                    IconButton(onClick = { onNavWalletHistory() }) {
-                        Icon(
-                            painter = painterResource(R.drawable.history_img),
-                            contentDescription = "Back",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                    is AnalyticsViewModel.RedeemEvent.Error -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }
 
-            item {
-                val data = (userDetailsState as? UiState.Success)?.data?.response
-                data?.let {
-                    TotalEarningsSection(
-                        userDetails = it,
-                        redeemState = redeemState,
-                        onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
-                    )
-                }
-            }
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val listState = rememberLazyListState()
 
-            item {
-                Text(
-                    text = "Promotions",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = DarkRed,
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-            }
-
-            itemsIndexed(promotions) { index, item ->
-                LaunchedEffect(listState) {
-                    snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                        .collect { lastVisibleIndex ->
-                            if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
-                                viewModel.fetchPromotions()
-                            }
-                        }
-                }
-                Box(modifier = Modifier.padding(horizontal = 12.dp)) {
-                    PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
-                }
-            }
-
-            if (isPaginationLoading) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 item {
-                    Box(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                            .background(DarkBlue)
+                            .padding(vertical = 8.dp, horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
+                        Text(
+                            text = "Analytics",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White
                         )
+
+                        IconButton(onClick = { onNavWalletHistory() }) {
+                            Icon(
+                                painter = painterResource(R.drawable.history_img),
+                                contentDescription = "Back",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    val data = (userDetailsState as? UiState.Success)?.data?.response
+                    data?.let {
+                        TotalEarningsSection(
+                            userDetails = it,
+                            redeemState = redeemState,
+                            onRedeemClick = { amount -> viewModel.redeemRequest(amount) }
+                        )
+                    }
+                }
+
+                item {
+                    Text(
+                        text = "Promotions",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = DarkRed,
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
+
+                itemsIndexed(promotions) { index, item ->
+                    LaunchedEffect(listState) {
+                        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                            .collect { lastVisibleIndex ->
+                                if (lastVisibleIndex == promotions.lastIndex && !isPaginationLoading) {
+                                    viewModel.fetchPromotions()
+                                }
+                            }
+                    }
+                    Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+                        PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
+                    }
+                }
+
+                if (isPaginationLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
                     }
                 }
             }
         }
-    }
-    if (uiState is UiState.Loading && promotions.isEmpty()) {
-        LoadingScreen()
-    }
+        if (uiState is UiState.Loading && promotions.isEmpty()) {
+            LoadingScreen()
+        }
 
-    if (uiState is UiState.Error && promotions.isEmpty()) {
-        Text(
-            text = (uiState as UiState.Error).message,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        if (uiState is UiState.Error && promotions.isEmpty()) {
+            Text(
+                text = (uiState as UiState.Error).message,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            )
+        }
     }
 }
 

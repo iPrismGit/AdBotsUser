@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,171 +61,178 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
             }
         )
     }
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .statusBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize()
         ) {
-            item {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .background(DarkBlue)
-                        .padding(12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .statusBarsPadding(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .background(DarkBlue)
+                            .padding(12.dp)
                     ) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    GradientDivider()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    GradientDivider()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    GradientDivider()
+                                }
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(R.drawable.add_bots_logo),
+                                    contentDescription = "Location",
+                                    modifier = Modifier.size(width = 120.dp, height = 60.dp),
+                                )
+
+                                Spacer(modifier = Modifier.width(4.dp))
+
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    GradientDivider()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    GradientDivider()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    GradientDivider()
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.align(Alignment.CenterEnd).padding(top = 20.dp, end = 16.dp)
+                                    .clickable(onClick = { showLogoutDialog = true }),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.logout_img),
+                                    contentDescription = "Logo",
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    "Logout", color = White,
+                                    fontFamily = MontserratFamily,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                GradientDivider()
-                                Spacer(modifier = Modifier.height(8.dp))
-                                GradientDivider()
-                                Spacer(modifier = Modifier.height(8.dp))
-                                GradientDivider()
-                            }
-                            Spacer(modifier = Modifier.width(4.dp))
                             Image(
-                                painter = painterResource(R.drawable.add_bots_logo),
+                                painter = painterResource(R.drawable.location_img1),
                                 contentDescription = "Location",
-                                modifier = Modifier.size(width = 120.dp, height = 60.dp),
+                                modifier = Modifier.size(46.dp),
                             )
 
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(12.dp))
 
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                GradientDivider()
-                                Spacer(modifier = Modifier.height(8.dp))
-                                GradientDivider()
-                                Spacer(modifier = Modifier.height(8.dp))
-                                GradientDivider()
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.location else "",
+                                        color = White,
+                                        fontFamily = MontserratFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp
+                                    )
+                                }
                             }
-                        }
-                        Column(
-                            modifier = Modifier.align(Alignment.CenterEnd).padding(top = 20.dp, end = 16.dp)
-                                .clickable(onClick = { showLogoutDialog = true }),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.logout_img),
-                                contentDescription = "Logo",
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            val statusText =
+                                if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.status else "Offline"
+                            val isOnline = statusText.lowercase() == "online"
                             Text(
-                                "Logout", color = White,
+                                text = statusText.replaceFirstChar { it.uppercase() },
+                                color = White,
                                 fontFamily = MontserratFamily,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium,
+                                modifier = Modifier
+                                    .background(
+                                        color = if (isOnline) Green else Red,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 6.dp)
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.location_img1),
-                            contentDescription = "Location",
-                            modifier = Modifier.size(46.dp),
-                        )
+                    GradientDivider()
+                }
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                item {
+                    Text(
+                        text = "Promotions",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = DarkRed,
+                        modifier = Modifier.padding(horizontal = 12.dp).background(MaterialTheme.colorScheme.background)
+                    )
+                }
 
-                        Column(modifier = Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.location else "",
-                                    color = White,
-                                    fontFamily = MontserratFamily,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
-                                )
-                            }
-                        }
-                        val statusText =
-                            if (userDetailsState is UiState.Success) (userDetailsState as UiState.Success).data.response.status else "Offline"
-                        val isOnline = statusText.lowercase() == "online"
-                        Text(
-                            text = statusText.replaceFirstChar { it.uppercase() },
-                            color = White,
-                            fontFamily = MontserratFamily,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .background(
-                                    color = if (isOnline) Green else Red,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(start = 12.dp, end = 12.dp, top = 6.dp, bottom = 6.dp)
-                        )
+                itemsIndexed(promotions) { index, item ->
+                    if (index >= promotions.size - 1) {
+                        viewModel.fetchPromotions()
+                    }
+                    Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+                        PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
                     }
                 }
-                GradientDivider()
-            }
 
-            item {
-                Text(
-                    text = "Promotions",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = DarkRed,
-                    modifier = Modifier.padding(horizontal = 12.dp).background(MaterialTheme.colorScheme.background)
-                )
-            }
-
-            itemsIndexed(promotions) { index, item ->
-                if (index >= promotions.size - 1) {
-                    viewModel.fetchPromotions()
-                }
-                Box(modifier = Modifier.padding(horizontal = 12.dp)) {
-                    PromotionCardInAnalytics(item, { onNavPromotionDetails(item.id) })
-                }
-            }
-
-            if (isPaginationLoading) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
-                        )
+                if (isPaginationLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
                     }
                 }
             }
         }
-    }
-    if (uiState is UiState.Loading && promotions.isEmpty()) {
-        LoadingScreen()
-    }
+        if (uiState is UiState.Loading && promotions.isEmpty()) {
+            LoadingScreen()
+        }
 
-    if (uiState is UiState.Error && promotions.isEmpty()) {
-        Text(
-            text = (uiState as UiState.Error).message,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        if (uiState is UiState.Error && promotions.isEmpty()) {
+            Text(
+                text = (uiState as UiState.Error).message,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            )
+        }
     }
 }
 
