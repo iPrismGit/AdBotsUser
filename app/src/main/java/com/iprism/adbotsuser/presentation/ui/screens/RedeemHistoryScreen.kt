@@ -105,7 +105,6 @@ fun RedeemHistoryScreen(
 @Composable
 fun TransactionItem(transaction: HistoryItem) {
     val amountColor = if (transaction.type.lowercase() == "debit") Color.Red else Color(0xFF00C566)
-    val amountPrefix = if (transaction.type.lowercase() == "debit") "-₹" else "₹"
 
     Column(
         modifier = Modifier
@@ -125,7 +124,7 @@ fun TransactionItem(transaction: HistoryItem) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "$amountPrefix${transaction.amount}",
+                text = "₹${transaction.amount}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 fontFamily = MontserratFamily,
