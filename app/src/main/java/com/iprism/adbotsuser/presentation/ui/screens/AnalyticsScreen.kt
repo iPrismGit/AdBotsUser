@@ -58,21 +58,20 @@ fun AnalyticsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        LaunchedEffect(Unit) {
-            viewModel.redeemEvent.collect { event ->
-                when (event) {
-                    is AnalyticsViewModel.RedeemEvent.Success -> {
-                        onNavRedeemSuccess("Redeem Request Sent")
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.redeemEvent.collect { event ->
+            when (event) {
+                is AnalyticsViewModel.RedeemEvent.Success -> {
+                    onNavRedeemSuccess("Redeem Request Sent")
+                }
 
-                    is AnalyticsViewModel.RedeemEvent.Error -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                    }
+                is AnalyticsViewModel.RedeemEvent.Error -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { viewModel.refresh() },
@@ -176,7 +175,7 @@ fun AnalyticsScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(16.dp)
+                    .padding(32.dp)
             )
         }
     }
