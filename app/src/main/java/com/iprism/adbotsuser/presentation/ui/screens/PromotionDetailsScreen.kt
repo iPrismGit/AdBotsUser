@@ -82,23 +82,13 @@ fun PromotionDetailsScreen(
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = details.name,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = MontserratFamily,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = " (${details.bussinessName})",
-                            fontSize = 20.sp,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontFamily = MontserratFamily,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
-
+                    Text(
+                        text = details.name,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = MontserratFamily,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -134,13 +124,13 @@ fun PromotionDetailsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Data Rows
-                    AnalyticsRow(label = "Total Days", value = "${details.totalDays} days")
+                    AnalyticsRow(label = "Total Days", value = "${details.totalDays} ${ if(details.totalDays.toInt() == 1) "Day" else "Days"}")
                     HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Price Per Minute", value = "₹${details.pricePerMinute}")
                     HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
-                    AnalyticsRow(label = "Play Time", value = "${details.playTime} Minutes")
+                    AnalyticsRow(label = "Play Time", value = "${details.playTime} ${if(details.playTime.toInt() == 1) "Minute" else "Minutes"}")
                     HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                     AnalyticsRow(label = "Screens", value = details.noOfScreens)
