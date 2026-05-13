@@ -125,7 +125,7 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.logout_img),
+                                    painter = painterResource(R.drawable.coin_img),
                                     contentDescription = "Logo",
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -241,21 +241,33 @@ fun PromotionCardInAnalytics(promotionsItem: PromotionsItem, onAnalyticsClick: (
     val cardGradient = Brush.horizontalGradient(
         colors = listOf(Color(0xFF015DC5), Color(0xFF559CEE))
     )
-    Box(
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(cardGradient)
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
     ) {
-        Column {
-            Text(
-                text = promotionsItem.name,
-                color = White,
-                fontFamily = MontserratFamily,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
-            )
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = promotionsItem.name,
+                    color = White,
+                    fontFamily = MontserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                /*Text(
+                    text = " (${promotionsItem.bussinessName})",
+                    color = White,
+                    fontFamily = MontserratFamily,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Light
+                )*/
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -270,7 +282,7 @@ fun PromotionCardInAnalytics(promotionsItem: PromotionsItem, onAnalyticsClick: (
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "End Date : ${promotionsItem.endDate}",
+                text = "Created On: ${promotionsItem.createdOn}",
                 color = White,
                 fontFamily = MontserratFamily,
                 fontSize = 14.sp,
@@ -281,16 +293,15 @@ fun PromotionCardInAnalytics(promotionsItem: PromotionsItem, onAnalyticsClick: (
         Button(
             onClick = { onAnalyticsClick() },
             modifier = Modifier
-                .align(Alignment.BottomEnd)
                 .height(32.dp),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkRed)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
             Text(
                 text = "View Analytics",
                 fontSize = 12.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onError,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Medium
             )
