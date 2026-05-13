@@ -125,7 +125,7 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.coin_img),
+                                    painter = painterResource(R.drawable.logout_img),
                                     contentDescription = "Logo",
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -224,14 +224,18 @@ fun HomeScreen(onLogout: () -> Unit, onNavPromotionDetails :(String) -> Unit, vi
         }
 
         if (uiState is UiState.Error && promotions.isEmpty()) {
-            Text(
-                text = (uiState as UiState.Error).message,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp)
-            )
+            if ((uiState as UiState.Error).message.equals("token not verified", true)) {
+                onLogout()
+            } else {
+                Text(
+                    text = (uiState as UiState.Error).message,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
+                )
+            }
         }
     }
 }
